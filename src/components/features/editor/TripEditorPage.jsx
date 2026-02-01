@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { AppLayout } from '../layout/AppLayout';
-import { ParticipantOnly } from '../security/FieldGuard';
-import { ItineraryManager } from '../itinerary/ItineraryManager';
-import { GearListManager } from '../features/gear/GearListManager';
+import { AppLayout } from '../../layout/AppLayout';
+import { ParticipantOnly } from '../../security/FieldGuard';
+import { ItineraryManager } from '../../itinerary/ItineraryManager';
+import { GearListManager } from '../gear/GearListManager';
 import { Wallet, ShieldAlert } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
-import { useTrip } from '../../context/TripContext';
+import { useTrip } from '../../../context/TripContext';
 
 export function TripEditorPage() {
     const { tripId } = useParams();

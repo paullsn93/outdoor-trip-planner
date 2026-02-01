@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { tripService, createInitialTripData } from '../../services/firestore';
-import { useAuth, ROLES } from '../security/AuthContext';
+import { tripService, createInitialTripData } from '../../../services/firestore';
+import { useAuth, ROLES } from '../../security/AuthContext';
 import { Plus, Trash2, Calendar, MapPin, Loader } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
