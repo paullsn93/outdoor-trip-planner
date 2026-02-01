@@ -1,0 +1,172 @@
+:root {
+  /* 戶外大地色系 (Earth Tones) - Light Mode */
+  --color-bg-h: 40;
+  --color-bg-s: 20%;
+  --color-bg-l: 96%; /* 米白/沙色 */
+
+  --color-surface-h: 0;
+  --color-surface-s: 0%;
+  --color-surface-l: 100%; /* 純白 */
+
+  --color-p-h: 145;
+  --color-p-s: 45%;
+  --color-p-l: 30%; /* 森林綠 */
+
+  --color-s-h: 30;
+  --color-s-s: 45%;
+  --color-s-l: 45%; /* 大地棕 */
+
+  --color-text-main-h: 150;
+  --color-text-main-s: 5%;
+  --color-text-main-l: 15%; /* 深炭灰 */
+
+  --color-text-muted-h: 150;
+  --color-text-muted-s: 5%;
+  --color-text-muted-l: 45%; /* 淺灰 */
+
+  --color-border-h: 150;
+  --color-border-s: 10%;
+  --color-border-l: 85%;
+
+  /* Spacing System */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+
+  /* Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* Functional Colors */
+  --color-danger: #ef4444;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* 戶外夜間模式 (Deep Forest Night) */
+    --color-bg-h: 150;
+    --color-bg-s: 10%;
+    --color-bg-l: 10%; /* 深森黑 */
+
+    --color-surface-h: 150;
+    --color-surface-s: 10%;
+    --color-surface-l: 15%; /* 稍亮的黑 */
+
+    --color-p-h: 145;
+    --color-p-s: 40%;
+    --color-p-l: 50%; /* 較亮的綠 */
+
+    --color-s-h: 30;
+    --color-s-s: 60%;
+    --color-s-l: 60%; /* 較亮的棕 */
+
+    --color-text-main-h: 150;
+    --color-text-main-s: 10%;
+    --color-text-main-l: 90%;
+
+    --color-text-muted-h: 150;
+    --color-text-muted-s: 5%;
+    --color-text-muted-l: 60%;
+
+    --color-border-h: 150;
+    --color-border-s: 10%;
+    --color-border-l: 25%;
+  }
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: hsl(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l));
+  color: hsl(var(--color-text-main-h), var(--color-text-main-s), var(--color-text-main-l));
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Utility Classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  gap: var(--space-2);
+}
+
+.btn-primary {
+  background-color: hsl(var(--color-p-h), var(--color-p-s), var(--color-p-l));
+  color: white;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+}
+
+.btn-secondary {
+  background-color: hsl(var(--color-surface-h), var(--color-surface-s), var(--color-surface-l));
+  border: 1px solid hsl(var(--color-border-h), var(--color-border-s), var(--color-border-l));
+  color: hsl(var(--color-text-main-h), var(--color-text-main-s), var(--color-text-main-l));
+}
+
+.btn-secondary:hover {
+  background-color: hsl(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l));
+}
+
+.card {
+  background-color: hsl(var(--color-surface-h), var(--color-surface-s), var(--color-surface-l));
+  border-radius: var(--radius-lg);
+  border: 1px solid hsl(var(--color-border-h), var(--color-border-s), var(--color-border-l));
+  padding: var(--space-4);
+}
+
+/* Layout Primitives */
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-2 { gap: var(--space-2); }
+.gap-4 { gap: var(--space-4); }
