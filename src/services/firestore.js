@@ -6,7 +6,6 @@ import {
     getDoc,
     setDoc,
     addDoc,
-    updateDoc,
     deleteDoc,
     Timestamp
 } from 'firebase/firestore';
@@ -26,7 +25,19 @@ export const createInitialTripData = (overrides = {}) => ({
         viewer_pwd: 'view'
     },
     is_private: false, // 是否包含敏感隱私資訊
-    itinerary: [], // 每日行程陣列
+    itinerary: [
+        {
+            id: '1',
+            title: 'Day 1: 出發',
+            content: '08:00 台北出發 (備註)',
+            status: 'done',
+            events: [
+                { id: 'e1', time: '08:00', title: '集合出發', location: { name: '台北車站', lat: 25.0478, lng: 121.5170 }, type: 'transport' },
+                { id: 'e2', time: '11:00', title: '抵達登山口', location: { name: '翠峰湖環山步道口', lat: 24.5134, lng: 121.6068 }, type: 'activity' }
+            ]
+        },
+        { id: '2', title: 'Day 2: 登山', content: '05:00 起床', status: 'active', events: [] },
+    ],
     gearList: [],
     ...overrides
 });

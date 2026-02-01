@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GEAR_TEMPLATES } from '../../../data/gearTemplates';
 import { Package, Plus, Trash, CheckSquare, Save, Loader } from 'lucide-react';
 import { tripService } from '../../../services/firestore';
+import { toast } from 'react-hot-toast';
 
 export function GearListManager() {
     const [gearList, setGearList] = useState([]);
@@ -38,7 +39,7 @@ export function GearListManager() {
 
     const handleSave = async () => {
         if (!tripId) {
-            alert('找不到行程紀錄，請先建立行程。');
+            toast.error('找不到行程紀錄，請先建立行程。');
             return;
         }
         setSaving(true);
@@ -47,9 +48,9 @@ export function GearListManager() {
                 gearList: gearList,
                 lastUpdated: new Date()
             });
-            alert('裝備清單已儲存！');
+            toast.success('裝備清單已儲存！');
         } catch (error) {
-            alert('儲存失敗：' + error.message);
+            toast.error('儲存失敗：' + error.message);
         }
         setSaving(false);
     };

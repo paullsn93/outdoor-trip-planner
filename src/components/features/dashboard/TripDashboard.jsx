@@ -3,34 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { tripService, createInitialTripData } from '../../services/firestore';
 import { useAuth, ROLES } from '../security/AuthContext';
 import { Plus, Trash2, Calendar, MapPin, Loader } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 export function TripDashboard() {
     const [trips, setTrips] = useState([]);
     const [loading, setLoading] = useState(true);
     const { role } = useAuth();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        loadTrips();
-    }, []);
-
-    const loadTrips = async () => {
-        setLoading(true);
-        try {
-            const data = await tripService.getAllTrips();
-            // Sort by lastUpdated desc
-            const sorted = data.sort((a, b) => {
-                const dateA = a.lastUpdated?.seconds || 0;
-                const dateB = b.lastUpdated?.seconds || 0;
-                return dateB - dateA;
-            });
-            setTrips(sorted);
-        } catch (error) {
-            console.error("Failed to load trips", error);
-        }
-        setLoading(false);
-    };
-
+    // ... (omitted lines)
     const handleCreateTrip = async () => {
         const title = prompt("請輸入新行程名稱：", "宜蘭三天兩夜遊");
         if (!title) return;
@@ -38,9 +18,10 @@ export function TripDashboard() {
         try {
             const newTrip = createInitialTripData({ title });
             const id = await tripService.saveTrip(null, newTrip);
+            toast.success("行程建立成功");
             navigate(`/trip/${id}`);
         } catch (error) {
-            alert("建立行程失敗：" + error.message);
+            toast.error("建立行程失敗：" + error.message);
         }
     };
 
@@ -51,8 +32,9 @@ export function TripDashboard() {
         try {
             await tripService.deleteTrip(id);
             setTrips(trips.filter(t => t.id !== id));
+            toast.success("行程已刪除");
         } catch (error) {
-            alert("刪除失敗：" + error.message);
+            toast.error("刪除失敗：" + error.message);
         }
     };
 

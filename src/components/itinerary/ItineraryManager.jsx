@@ -16,10 +16,13 @@ import {
 import { SortableDayCard } from './SortableDayCard';
 import { Plus, Save, Loader } from 'lucide-react';
 import { tripService, createInitialTripData } from '../../services/firestore';
+import { toast } from 'react-hot-toast';
+import { useTrip } from '../../context/TripContext';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
 export function ItineraryManager() {
+    const { updateTripData, setCurrentTrip } = useTrip();
     const [days, setDays] = useState([]);
     const [tripMetadata, setTripMetadata] = useState(null); // Store full trip data
     const [tripId, setTripId] = useState(null);
@@ -45,6 +48,7 @@ export function ItineraryManager() {
                     console.log("Loaded Trip:", latestTrip);
                     setTripId(latestTrip.id);
                     setTripMetadata(latestTrip);
+                    setCurrentTrip(latestTrip);
 
                     if (latestTrip.itinerary && latestTrip.itinerary.length > 0) {
                         setDays(latestTrip.itinerary);
@@ -106,9 +110,10 @@ export function ItineraryManager() {
 
             const id = await tripService.saveTrip(tripId, dataToSave);
             setTripId(id);
-            alert('行程已儲存至雲端！');
+            setCurrentTrip({ ...dataToSave, id }); // Sync context
+            toast.success('行程已儲存至雲端！');
         } catch (error) {
-            alert('儲存失敗：' + error.message);
+            toast.error('儲存失敗：' + error.message);
         }
         setSaving(false);
     };

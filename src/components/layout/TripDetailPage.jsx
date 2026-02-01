@@ -7,6 +7,8 @@ import { GearListManager } from '../features/gear/GearListManager';
 import { Wallet, ShieldAlert, ChevronLeft, Loader } from 'lucide-react';
 import { tripService } from '../../services/firestore';
 
+import { toast } from 'react-hot-toast';
+
 export function TripDetailPage() {
     const { tripId } = useParams();
     const navigate = useNavigate();
@@ -21,7 +23,7 @@ export function TripDetailPage() {
                 if (data) {
                     setTripMetadata(data);
                 } else {
-                    alert("找不到此行程");
+                    toast.error("找不到此行程");
                     navigate('/');
                 }
             } catch (error) {

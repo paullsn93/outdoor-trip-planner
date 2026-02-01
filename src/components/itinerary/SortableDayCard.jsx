@@ -1,9 +1,12 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { storageService } from '../../services/storage';
-import { GripVertical, Trash2, Copy, Image as ImageIcon, Loader, X } from 'lucide-react';
+import { GripVertical, Trash2, Copy, Image as ImageIcon, Loader, X, Plus } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'react-hot-toast';
+import { EventItem } from './EventItem';
 
 export function SortableDayCard({ day, onDelete, onDuplicate, onStatusChange, onUpdate, index }) {
     const {
@@ -34,7 +37,7 @@ export function SortableDayCard({ day, onDelete, onDuplicate, onStatusChange, on
             const result = await storageService.uploadImage(file);
             onUpdate(day.id, 'image', result.url);
         } catch (error) {
-            alert('上傳失敗: ' + error.message);
+            toast.error('上傳失敗: ' + error.message);
         }
         setUploading(false);
     };
@@ -44,6 +47,36 @@ export function SortableDayCard({ day, onDelete, onDuplicate, onStatusChange, on
             onUpdate(day.id, 'image', null);
         }
     };
+
+    const handleAddEvent = () => {
+        const newEvent = {
+            id: Math.random().toString(36).substr(2, 9),
+            time: '09:00',
+            title: '',
+            location: { name: '', lat: null, lng: null },
+            type: 'activity' // activity, transport, meal, lodging
+        };
+        const currentEvents = day.events || [];
+        onUpdate(day.id, 'events', [...currentEvents, newEvent]);
+    };
+
+    const handleUpdateEvent = (eventId, field, value) => {
+        const currentEvents = day.events || [];
+        const updatedEvents = currentEvents.map(ev =>
+            ev.id === eventId ? { ...ev, [field]: value } : ev
+        );
+        onUpdate(day.id, 'events', updatedEvents);
+    };
+
+    const handleDeleteEvent = (eventId) => {
+        if (confirm('確定要刪除此事件嗎？')) {
+            const currentEvents = day.events || [];
+            onUpdate(day.id, 'events', currentEvents.filter(ev => ev.id !== eventId));
+        }
+    };
+
+    // Sort events by time
+    const sortedEvents = (day.events || []).sort((a, b) => a.time.localeCompare(b.time));
 
     return (
         <div ref={setNodeRef} style={style} className={`card day-card ${day.status || 'todo'}`}>
@@ -91,12 +124,33 @@ export function SortableDayCard({ day, onDelete, onDuplicate, onStatusChange, on
             </div>
 
             <div className="day-content">
+                {/* Event List Section */}
+                <div className="events-list" style={{ marginBottom: '1rem' }}>
+                    {sortedEvents.map(event => (
+                        <EventItem
+                            key={event.id}
+                            event={event}
+                            onUpdate={(field, value) => handleUpdateEvent(event.id, field, value)}
+                            onDelete={() => handleDeleteEvent(event.id)}
+                        />
+                    ))}
+
+                    <button
+                        className="btn btn-secondary"
+                        style={{ width: '100%', fontSize: '0.85rem', padding: '6px', marginTop: '4px' }}
+                        onClick={handleAddEvent}
+                    >
+                        <Plus size={16} /> 新增活動事件
+                    </button>
+                </div>
+
                 <textarea
                     className="content-editor"
                     value={day.content || ''}
                     onChange={(e) => onUpdate(day.id, 'content', e.target.value)}
-                    placeholder="在此輸入行程內容..."
-                    rows={3}
+                    placeholder="備註..."
+                    rows={2}
+                    style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}
                 />
 
                 {day.image && (

@@ -6,10 +6,13 @@ import { ParticipantOnly } from './components/security/FieldGuard';
 import { ItineraryManager } from './components/itinerary/ItineraryManager';
 import { GearListManager } from './components/features/gear/GearListManager';
 import { Wallet, ShieldAlert } from 'lucide-react';
+import { Toaster } from 'react-hot-toast';
+import { TripProvider } from './context/TripContext';
 
 function AppContent() {
   return (
     <AppLayout>
+      <Toaster position="top-center" />
       <div className="trip-content">
         <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
           太平山翠峰湖三日遊
@@ -46,12 +49,15 @@ function AppContent() {
   );
 }
 
+
 function App() {
   return (
     <AuthProvider>
-      <PasswordGate>
-        <AppContent />
-      </PasswordGate>
+      <TripProvider>
+        <PasswordGate>
+          <AppContent />
+        </PasswordGate>
+      </TripProvider>
     </AuthProvider>
   );
 }
