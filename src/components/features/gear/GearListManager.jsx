@@ -4,29 +4,26 @@ import { Package, Plus, Trash, CheckSquare, Save, Loader } from 'lucide-react';
 import { tripService } from '../../../services/firestore';
 import { toast } from 'react-hot-toast';
 
+import { useParams } from 'react-router-dom';
+
 export function GearListManager() {
+    const { tripId: routeTripId } = useParams();
     const [gearList, setGearList] = useState([]);
-    const [tripId, setTripId] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [tripId, setTripId] = useState(routeTripId);
+    const [loading, setLoading] = useState(false); // eslint-disable-line no-unused-vars
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
+        if (!routeTripId) return;
+
         async function loadTrip() {
             setLoading(true);
             try {
-                // Determine which trip to load (logic shared with ItineraryManager for now)
-                const trips = await tripService.getAllTrips();
-                const sortedTrips = trips.sort((a, b) => {
-                    const dateA = a.lastUpdated?.seconds || 0;
-                    const dateB = b.lastUpdated?.seconds || 0;
-                    return dateB - dateA;
-                });
-
-                if (sortedTrips.length > 0) {
-                    const latestTrip = sortedTrips[0];
-                    setTripId(latestTrip.id);
-                    if (latestTrip.gearList) {
-                        setGearList(latestTrip.gearList);
+                const trip = await tripService.getTripById(routeTripId);
+                if (trip) {
+                    setTripId(trip.id);
+                    if (trip.gearList) {
+                        setGearList(trip.gearList);
                     }
                 }
             } catch (error) {
@@ -35,7 +32,7 @@ export function GearListManager() {
             setLoading(false);
         }
         loadTrip();
-    }, []);
+    }, [routeTripId]);
 
     const handleSave = async () => {
         if (!tripId) {

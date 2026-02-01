@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 import { MapPin, Clock, Trash2 } from 'lucide-react';
 

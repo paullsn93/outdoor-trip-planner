@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from 'react';
 import {
     DndContext,
@@ -18,93 +19,64 @@ import { Plus, Save, Loader } from 'lucide-react';
 import { tripService, createInitialTripData } from '../../services/firestore';
 import { toast } from 'react-hot-toast';
 import { useTrip } from '../../context/TripContext';
+import { useParams } from 'react-router-dom';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
 export function ItineraryManager() {
-    const { updateTripData, setCurrentTrip } = useTrip();
+    const { tripId: routeTripId } = useParams();
+    const { setCurrentTrip } = useTrip();
     const [days, setDays] = useState([]);
     const [tripMetadata, setTripMetadata] = useState(null); // Store full trip data
-    const [tripId, setTripId] = useState(null);
+    const [tripId, setTripId] = useState(routeTripId);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [errorMsg, setErrorMsg] = useState(null);
 
     useEffect(() => {
+        if (!routeTripId) return;
+
         async function loadTrip() {
             setLoading(true);
             setErrorMsg(null);
             try {
-                const trips = await tripService.getAllTrips();
-                // Sort by lastUpdated desc to get the latest work
-                const sortedTrips = trips.sort((a, b) => {
-                    const dateA = a.lastUpdated?.seconds || 0;
-                    const dateB = b.lastUpdated?.seconds || 0;
-                    return dateB - dateA;
-                });
+                const trip = await tripService.getTripById(routeTripId);
 
-                if (sortedTrips.length > 0) {
-                    const latestTrip = sortedTrips[0];
-                    console.log("Loaded Trip:", latestTrip);
-                    setTripId(latestTrip.id);
-                    setTripMetadata(latestTrip);
-                    setCurrentTrip(latestTrip);
+                if (trip) {
+                    console.log("Loaded Trip:", trip);
+                    setTripId(trip.id);
+                    setTripMetadata(trip);
+                    setCurrentTrip(trip);
 
-                    if (latestTrip.itinerary && latestTrip.itinerary.length > 0) {
-                        setDays(latestTrip.itinerary);
-                    } else if (latestTrip.days && latestTrip.days.length > 0) {
-                        setDays(latestTrip.days);
+                    if (trip.itinerary && trip.itinerary.length > 0) {
+                        setDays(trip.itinerary);
+                    } else if (trip.days && trip.days.length > 0) {
+                        setDays(trip.days);
+                    } else {
+                        setDays([]);
                     }
                 } else {
-                    // Initialize with schema-compliant data
-                    const initialData = createInitialTripData({
-                        title: '太平山翠峰湖三日遊',
-                        itinerary: [
-                            { id: '1', title: 'Day 1: 出發', content: '08:00 台北出發', status: 'done' },
-                            { id: '2', title: 'Day 2: 登山', content: '05:00 起床', status: 'active' },
-                        ]
-                    });
-                    setTripMetadata(initialData);
-                    setDays(initialData.itinerary);
+                    setErrorMsg("找不到此行程 (ID: " + routeTripId + ")");
                 }
             } catch (err) {
                 console.error(err);
                 setErrorMsg("讀取行程失敗: " + err.message);
-                // Fallback to offline mode
-                const initialData = createInitialTripData({
-                    title: '太平山翠峰湖三日遊 (離線/錯誤)',
-                    itinerary: [
-                        { id: '1', title: 'Day 1: 出發', content: '08:00 台北出發', status: 'done' },
-                        { id: '2', title: 'Day 2: 登山', content: '05:00 起床', status: 'active' },
-                    ]
-                });
-                setTripMetadata(initialData);
-                setDays(initialData.itinerary);
             }
             setLoading(false);
         }
         loadTrip();
-    }, []);
+    }, [routeTripId]);
 
     const handleSave = async () => {
         setSaving(true);
         try {
-            // Only update fields managed by this component to avoid overwriting GearList
             const tripData = {
                 itinerary: days,
                 lastUpdated: new Date()
             };
 
-            // If we have title/status in metadata, distinctively we shouldn't overwrite them 
-            // unless we have UI to edit them here. 
-            // Currently ItineraryManager doesn't edit title/status of the TRIP, only days.
-            // So this is safe. 
-            // Wait, if it's a new trip (tripId null), we DO need full metadata.
-
             let dataToSave = tripData;
-
             if (!tripId && tripMetadata) {
-                // New trip: need full data
                 dataToSave = { ...tripMetadata, ...tripData };
             }
 
@@ -165,6 +137,14 @@ export function ItineraryManager() {
         setDays(days.map(d => d.id === id ? { ...d, [field]: value } : d));
     };
 
+    if (loading) {
+        return <div className="p-4 text-center"><Loader className="animate-spin inline-block mr-2" /> 載入行程中...</div>;
+    }
+
+    if (errorMsg) {
+        return <div className="p-4 text-center text-red-500 bg-red-50 rounded m-4">{errorMsg}</div>;
+    }
+
     return (
         <div className="itinerary-manager">
             <div className="manager-header flex-col" style={{ marginBottom: '1rem' }}>
@@ -180,18 +160,6 @@ export function ItineraryManager() {
                         </button>
                     </div>
                 </div>
-                {errorMsg && (
-                    <div style={{
-                        marginTop: '0.5rem',
-                        padding: '0.5rem',
-                        background: '#fee2e2',
-                        color: '#b91c1c',
-                        borderRadius: '4px',
-                        fontSize: '0.9rem'
-                    }}>
-                        ⚠️ {errorMsg}
-                    </div>
-                )}
             </div>
 
             <DndContext

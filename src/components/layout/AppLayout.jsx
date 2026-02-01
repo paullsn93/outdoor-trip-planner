@@ -7,7 +7,7 @@ import { useAuth } from '../security/AuthContext';
 
 export function AppLayout({ children }) {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  // const [isSidebarOpen, setIsSidebarOpen] = React.useState(false); // eslint-disable-line no-unused-vars
   const { logout, role } = useAuth();
 
   if (isDesktop) {

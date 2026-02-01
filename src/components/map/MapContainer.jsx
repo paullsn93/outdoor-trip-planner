@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 import { MapContainer as LeafletMap, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -54,7 +53,7 @@ export function MapContainer() {
                                 newRoute.push(pos);
                             }
                         } catch (e) {
-                            console.warn("Invalid coordinates", event);
+                            console.warn("Invalid coordinates", event, e);
                         }
                     }
                 });

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { ChevronUp, CloudSun, Navigation, Sparkles, Map as MapIcon } from 'lucide-react';
 import { generateRainPlan } from '../../services/ai';
 

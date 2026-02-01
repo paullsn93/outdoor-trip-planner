@@ -10,7 +10,21 @@ export function TripDashboard() {
     const [loading, setLoading] = useState(true);
     const { role } = useAuth();
     const navigate = useNavigate();
-    // ... (omitted lines)
+
+    useEffect(() => {
+        const loadTrips = async () => {
+            try {
+                const data = await tripService.getAllTrips();
+                setTrips(data);
+            } catch (error) {
+                toast.error("無法載入行程");
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadTrips();
+    }, []);
     const handleCreateTrip = async () => {
         const title = prompt("請輸入新行程名稱：", "宜蘭三天兩夜遊");
         if (!title) return;
